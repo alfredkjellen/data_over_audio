@@ -24,7 +24,7 @@ def decode_fsk_signal(filename):
     print(f"Läser in ljudfilen: {filename}\n")
     sample_rate, audio_data = wavfile.read(filename)
     print(f"Samplingsfrekvens: {sample_rate} Hz")
-    print(f"Ljuddatans längd: {len(audio_data)} samples\n")
+    print(f"Ljuddatans längd: {len(audio_data)} samples")
     
     binary_data = []
     
