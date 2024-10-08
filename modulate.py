@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io.wavfile import write
-import soundfile as sf
 
 carrier_freq = 1000
 sampling_rate = 44100
