@@ -3,7 +3,7 @@ from scipy.io import wavfile
 import numpy as np
 
 SAMPLERATE = 44100
-DURATION = 5  # Längden på inspelningen i sekunder
+DURATION = 10  # Längden på inspelningen i sekunder
 OUTPUT_FILE = 'recording.wav' 
 
 def record_audio(duration, samplerate):

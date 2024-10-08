@@ -18,19 +18,29 @@ def generera_sinusvåg(duration, frekvens):
     t = np.linspace(0, duration, int(SAMPLINGSFREKVENS * duration), endpoint=False)
     return AMPLITUD * np.sin(2 * np.pi * frekvens * t)
 
+def skapa_moduleringsvåg(duration):
+    t = np.linspace(0, duration, int(SAMPLINGSFREKVENS * duration), endpoint=False)
+    return np.abs(np.sin(10 * np.pi * t))  # Moduleringsvågen med en period på 0.2 sekunder
+
 def skapa_fsk_signal(data):
     pilot_signal = generera_sinusvåg(PILOT_DURATION, PILOT_FREKVENS)
-
+    
     signal = np.array([])
+    moduleringsvåg = skapa_moduleringsvåg(BIT_DURATION)  # Skapa moduleringsvåg för en bit
+    
     for bit in data:
         if bit == '1':
             chunk_signal = generera_sinusvåg(BIT_DURATION, FREKVENS)
         else:
             chunk_signal = np.zeros(CHUNK_SIZE)
+        
+        # Applicera moduleringsvågen (mjuka övergångar) på varje bit
+        chunk_signal = chunk_signal * moduleringsvåg
         signal = np.concatenate((signal, chunk_signal))
 
     silence = np.zeros(int(SAMPLINGSFREKVENS * 2))
 
+    # Lägg till tystnad, pilotsignal och datasignal
     signal = np.concatenate((silence, pilot_signal, signal))
     return signal
 
