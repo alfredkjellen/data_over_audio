@@ -6,10 +6,10 @@ from translator import binary_to_text
 
 # KONSTANTER
 FREKVENS = 2000  
-PILOT_FREKVENS = 1009
+PILOT_FREKVENS = 2000
 SAMPLE_RATE = 44100  
 BIT_DURATION = 0.1  
-PILOT_DURATION = 0.5
+PILOT_DURATION = 0.1
 CHUNK_SIZE = int(SAMPLE_RATE * BIT_DURATION)
 PILOT_CHUNK_SIZE = int(SAMPLE_RATE * PILOT_DURATION)
 PILOT_CHUNK_STEP = 50
@@ -30,7 +30,7 @@ def find_pilot_signal(audio_data):
         chunk = audio_data[x:x + PILOT_CHUNK_SIZE]
         if detect_frequency (chunk, PILOT_FREKVENS) == 1:
             print(f'pilotsignal börjar vid {x + PILOT_CHUNK_SIZE}')
-            return x + 2 * PILOT_CHUNK_SIZE 
+            return x + 2 * PILOT_CHUNK_SIZE
     return None
 
 def decode_fsk_signal(filename):
@@ -132,4 +132,3 @@ if __name__ == "__main__":
         print("Ingen data kunde avkodas")
 
 #01001000011001010110101000100000011010000110010101101010001011100010000001011001011001010010000100111111001011100010111000101110
-#010010000110010101101010001000000011000001100101011011110011111100100000011110010
