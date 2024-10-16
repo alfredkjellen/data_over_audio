@@ -4,35 +4,16 @@ def create_ascii_dict():
     bin_to_ascii = {v: k for k, v in ascii_to_bin.items()}
     return ascii_to_bin, bin_to_ascii
 
-def file_to_binary(file_path):
-    ascii_to_bin, _ = create_ascii_dict()
-    with open(file_path, 'r') as file:
-        text = file.read()
-    binary_output = []
-    for char in text:
-        if char in ascii_to_bin:
-            binary_output.append(ascii_to_bin[char])
-        else:
-            raise ValueError(f"Tecken '{char}' finns inte i teckenuppsättningen.")
-    return ''.join(binary_output)
-
 def text_to_binary(text):
     ascii_to_bin, _ = create_ascii_dict()
-    binary_output = []
-    for char in text:
-        if char in ascii_to_bin:
-            binary_output.append(ascii_to_bin[char])
-        else:
-            raise ValueError(f"Tecken '{char}' finns inte i teckenuppsättningen.")
-    return ''.join(binary_output)
+    return ''.join(ascii_to_bin.get(char, '######') for char in text)
 
-def binary_to_text(binary_data):
+def binary_to_text(binary_list):
     _, bin_to_ascii = create_ascii_dict()
-    text_output = []
-    for i in range(0, len(binary_data), 6):
-        bin_chunk = binary_data[i:i+6]
-        if bin_chunk in bin_to_ascii:
-            text_output.append(bin_to_ascii[bin_chunk])
-        else:
-            raise ValueError(f"Binär sekvens '{bin_chunk}' finns inte i teckenuppsättningen.")
-    return ''.join(text_output)
+    binary_string = ''.join(map(str, binary_list))
+    return ''.join(bin_to_ascii.get(''.join(map(str, binary_string[i:i+6])), '#') 
+                   for i in range(0, len(binary_string) - (len(binary_string) % 6), 6))
+
+def file_to_binary(file_path):
+    with open(file_path, 'r') as file:
+        return text_to_binary(file.read())
