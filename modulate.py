@@ -2,7 +2,7 @@ import numpy as np
 import sounddevice as sd
 import scipy.io.wavfile as wavfile
 import matplotlib.pyplot as plt
-from translate import text_to_binary
+from translate import file_to_binary
 
 FREQUENCIES = [730, 950, 1300, 1800, 2400, 3100, 3800, 4700]
 PILOT_FREQUENCY = 520
@@ -11,7 +11,7 @@ BIT_DURATION = 0.2
 PILOT_DURATION = 0.1
 AMPLITUDE = 0.5
 CHUNK_SIZE = int(SAMPLING_FREQUENCY * BIT_DURATION)
-DATA_FILE = text_to_binary("text.txt")
+DATA_FILE = file_to_binary("text.txt")
 
 def generate_sine_wave(frequency, duration):
     t = np.linspace(0, duration, int(SAMPLING_FREQUENCY * duration), endpoint=False)

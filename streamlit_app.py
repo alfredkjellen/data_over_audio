@@ -1,7 +1,7 @@
 import streamlit as st
 from pathlib import Path
 from translate import binary_to_text, file_to_binary
-from demodulate import find_pilot_signal, decode_fsk_signal, PILOT_CHUNK_SIZE, FREQUENCIES
+from demodulate import find_pilot_signal, decode_fsk_signal, PILOT_CHUNK_SIZE, FREQUENCIES, MAGNITUDE_THRESHOLDS
 from plots import highlight_binary_data, plot_frequency_domain, plot_magnitude_over_time, plot_time_domain
 
 if __name__ == "__main__":
@@ -31,7 +31,7 @@ if __name__ == "__main__":
             st.plotly_chart(plot_frequency_domain(audio_data, sample_rate))
             
             for freq in FREQUENCIES:
-                st.plotly_chart(plot_magnitude_over_time(audio_data, sample_rate, freq))
+                st.plotly_chart(plot_magnitude_over_time(audio_data, sample_rate, freq, MAGNITUDE_THRESHOLDS[freq]))
         else:
             st.write("No data could be decoded from the selected file.")
 
