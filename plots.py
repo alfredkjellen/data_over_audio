@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.fft import fft
 import plotly.graph_objs as go
-from demodulate_old import CHUNK_SIZE, PILOT_SEARCH_STEP, ABSOLUTE_MAGNITUDE_THRESHOLD
-from demodulate_old import get_frequency_magnitude
+from demodulate import CHUNK_SIZE, PILOT_SEARCH_STEP, ABSOLUTE_MAGNITUDE_THRESHOLD
+from demodulate import get_frequency_magnitude
 
 def plot_time_domain(audio_data, sample_rate, binary_data, start_pos, actual_binary):
     time = np.linspace(0, len(audio_data) / sample_rate, num=len(audio_data))

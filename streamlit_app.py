@@ -5,7 +5,7 @@ from demodulate import find_pilot_signal, decode_fsk_signal, PILOT_CHUNK_SIZE, F
 from plots import highlight_binary_data, plot_frequency_domain, plot_magnitude_over_time, plot_time_domain
 
 if __name__ == "__main__":
-    audio_folder = Path("8f")
+    audio_folder = Path("signal")
 
     st.title("Data Over Audio Demodulation")
     audio_files = list(audio_folder.glob("*.wav"))
