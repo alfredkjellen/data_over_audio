@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.fft import fft
 import plotly.graph_objs as go
-from demodulate import CHUNK_SIZE, PILOT_SEARCH_STEP, ABSOLUTE_MAGNITUDE_THRESHOLD
+from demodulate import CHUNK_SIZE, PILOT_SEARCH_STEP
 from demodulate import get_frequency_magnitude
 
 def plot_time_domain(audio_data, sample_rate, binary_data, start_pos, actual_binary):
@@ -54,7 +54,7 @@ def plot_frequency_domain(audio_data, sample_rate):
     layout = go.Layout(title="Frequency Domain", xaxis_title="Frequency (Hz)", yaxis_title="Magnitude")
     return go.Figure(data=[trace], layout=layout)
 
-def plot_magnitude_over_time(audio_data, sample_rate, freq):
+def plot_magnitude_over_time(audio_data, sample_rate, freq, threshold):
     time = np.linspace(0, len(audio_data) / sample_rate, num=len(audio_data))
     pilot_magnitudes = [get_frequency_magnitude(audio_data[i:i + CHUNK_SIZE], freq) for i in range(0, len(audio_data) - CHUNK_SIZE, PILOT_SEARCH_STEP)]
     chunk_times = time[::PILOT_SEARCH_STEP]
@@ -63,9 +63,9 @@ def plot_magnitude_over_time(audio_data, sample_rate, freq):
     
     threshold_trace = go.Scatter(
         x=chunk_times[:len(pilot_magnitudes)],
-        y=[ABSOLUTE_MAGNITUDE_THRESHOLD] * len(pilot_magnitudes),
+        y=[threshold] * len(pilot_magnitudes),
         mode='lines',
-        name="Absolute Magnitude Threshold",
+        name="Magnitude Threshold",
         line=dict(color='red', dash='dash') 
     )
     
