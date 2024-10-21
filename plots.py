@@ -1,24 +1,24 @@
 import numpy as np
 from scipy.fft import fft
 import plotly.graph_objs as go
-from demodulate import CHUNK_SIZE, PILOT_SEARCH_STEP
-from demodulate import get_frequency_magnitude
+from demodulate import get_frequency_magnitude, PILOT_SEARCH_STEP, BIT_DURATION
 
-def plot_time_domain(audio_data, sample_rate, binary_data, start_pos, actual_binary):
+def plot_time_domain(audio_data, sample_rate, duration, binary_data, start_pos, actual_binary):
+    chunk_size = int(sample_rate * duration)
     time = np.linspace(0, len(audio_data) / sample_rate, num=len(audio_data))
     
     trace1 = go.Scatter(x=time[:start_pos], y=audio_data[:start_pos], mode='lines', name="Pilot Signal")
     traces = [trace1]
     
     for i in range(len(binary_data) // 2 + 1):
-        bit_start_time = (start_pos + i * CHUNK_SIZE) / sample_rate
+        bit_start_time = (start_pos + i * chunk_size) / sample_rate
         trace = go.Scatter(x=[bit_start_time, bit_start_time], y=[min(audio_data), max(audio_data)], 
                            mode='lines', line=dict(color='gray', dash='dash'), showlegend=False)
         traces.append(trace)
 
     for i in range(0, len(binary_data), 2):
-        bit_start = start_pos + (i // 2) * CHUNK_SIZE
-        bit_time = time[bit_start:bit_start + CHUNK_SIZE]
+        bit_start = start_pos + (i // 2) * chunk_size
+        bit_time = time[bit_start:bit_start + chunk_size]
         bit_pair = binary_data[i:i+2]
         actual_bit_pair = actual_binary[i:i+2]
         bit_string = ''.join(map(str, bit_pair))
@@ -36,7 +36,7 @@ def plot_time_domain(audio_data, sample_rate, binary_data, start_pos, actual_bin
             else:
                 color = 'green'
 
-        trace = go.Scatter(x=bit_time, y=audio_data[bit_start:bit_start + CHUNK_SIZE], mode='lines', 
+        trace = go.Scatter(x=bit_time, y=audio_data[bit_start:bit_start + chunk_size], mode='lines', 
                            line=dict(color=color), showlegend=False)
         traces.append(trace)
     
@@ -55,8 +55,9 @@ def plot_frequency_domain(audio_data, sample_rate):
     return go.Figure(data=[trace], layout=layout)
 
 def plot_magnitude_over_time(audio_data, sample_rate, freq, threshold):
+    chunk_size = int(BIT_DURATION, sample_rate)
     time = np.linspace(0, len(audio_data) / sample_rate, num=len(audio_data))
-    pilot_magnitudes = [get_frequency_magnitude(audio_data[i:i + CHUNK_SIZE], freq) for i in range(0, len(audio_data) - CHUNK_SIZE, PILOT_SEARCH_STEP)]
+    pilot_magnitudes = [get_frequency_magnitude(audio_data[i:i + chunk_size], freq) for i in range(0, len(audio_data) - chunk_size, PILOT_SEARCH_STEP, sample_rate)]
     chunk_times = time[::PILOT_SEARCH_STEP]
     
     trace = go.Scatter(x=chunk_times[:len(pilot_magnitudes)], y=pilot_magnitudes, mode='lines', name="Magnitude")
@@ -79,8 +80,7 @@ def plot_magnitude_over_time(audio_data, sample_rate, freq, threshold):
 
 
 
-
-def highlight_binary_data(binary_data, correct_binary):
+def get_highlighted_bits(binary_data, correct_binary):
     highlighted = ""
     for d_bit, c_bit in zip(binary_data, correct_binary):
         if d_bit == c_bit:
