@@ -4,7 +4,6 @@ import scipy.io.wavfile as wavfile
 import matplotlib.pyplot as plt
 from translate import file_to_binary
 
-<<<<<<< HEAD
 # Constants
 FREQUENCIES = [730, 950, 1300, 1800, 2400, 3100, 3800, 4700]  # Frequency for each bit position
 PILOT_FREQUENCY = 520  # Pilot signal frequency in Hz
@@ -17,17 +16,7 @@ CHUNK_SIZE = int(SAMPLING_FREQUENCY * BIT_DURATION)  # Number of samples per chu
 BIT_MODULATION_FREQUENCY = 1 / BIT_DURATION  # Modulation frequency for bit transitions
 PILOT_MODULATION_FREQUENCY = 1 / PILOT_DURATION  # Modulation frequency for pilot signal
 EASE_OUT_EXPONENT = 9
-DATA_FILE = text_to_binary("text.txt")  # Convert text file to binary data
-=======
-FREQUENCIES = [730, 950, 1300, 1800, 2400, 3100, 3800, 4700]
-PILOT_FREQUENCY = 520
-SAMPLING_FREQUENCY = 44100
-BIT_DURATION = 0.2
-PILOT_DURATION = 0.1
-AMPLITUDE = 0.5
-CHUNK_SIZE = int(SAMPLING_FREQUENCY * BIT_DURATION)
-DATA_FILE = file_to_binary("text.txt")
->>>>>>> 1a89e81320894a67711bac3f7b53dd719b47b893
+DATA_FILE = file_to_binary("text.txt")  # Convert text file to binary data
 
 def generate_sine_wave(frequency, duration):
     """
