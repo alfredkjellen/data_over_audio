@@ -1,7 +1,6 @@
 import numpy as np
 from scipy.io import wavfile
 from scipy.fft import fft
-from translate import binary_to_text
 
 FREQUENCIES = [730, 950, 1300, 1800, 2400, 3100, 3800, 4700]
 PILOT_FREQUENCY = 520
