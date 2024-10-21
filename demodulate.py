@@ -27,13 +27,13 @@ def get_frequency_magnitude(chunk, target_freq, sample_rate, bandwidth=50):
     return np.max(magnitude[mask])
  
  
-def get_pilot_start(audio_data, pilot_chunk_size):
+def get_pilot_start(audio_data, pilot_chunk_size, sample_rate):
     max_magnitude = 0
     pilot_start = 0
    
     for i in range(0, len(audio_data) - pilot_chunk_size, PILOT_SEARCH_STEP):
         chunk = audio_data[i:i + pilot_chunk_size]
-        magnitude = get_frequency_magnitude(chunk, PILOT_FREQUENCY)
+        magnitude = get_frequency_magnitude(chunk, PILOT_FREQUENCY, sample_rate)
        
         if magnitude > max_magnitude:
             max_magnitude = magnitude
@@ -64,19 +64,20 @@ def decode_fsk_signal(filename):
     if len(audio_data.shape) == 2:
         audio_data = np.mean(audio_data, axis=1).astype(audio_data.dtype)
  
-    start_pos = int(get_pilot_start(audio_data, pilot_chunk_size) + pilot_chunk_size)
+    start_pos = int(get_pilot_start(audio_data, pilot_chunk_size, sample_rate) + pilot_chunk_size)
    
     if start_pos is None:
         print("Pilot signal not found")
         return None, audio_data, sample_rate
  
-    end_pos = start_pos + 10 * sample_rate
+    
+    end_pos = start_pos + 10 * sample_rate # Signal is 10 seconds
  
     binary_data = []
    
     previous_chunk = audio_data[start_pos - chunk_size: start_pos]
-    for x in range(start_pos, end_pos, chunk_size):
-        chunk = audio_data[x:x + chunk_size]
+    for i in range(start_pos, end_pos, chunk_size):
+        chunk = audio_data[i:i + chunk_size]
         for freq in FREQUENCIES:
             detected = detect_bit(chunk, previous_chunk, freq, MAGNITUDE_THRESHOLDS[freq], sample_rate)
             binary_data.append(detected)
