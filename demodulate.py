@@ -9,7 +9,8 @@ PILOT_DURATION = 0.1
 PILOT_SEARCH_STEP = 50
 ABSOLUTE_MAGNITUDE_THRESHOLD = 75000
 RELATIVE_MAGNITUDE_THRESHOLD = 5
-MAGNITUDE_THRESHOLDS = {730:ABSOLUTE_MAGNITUDE_THRESHOLD, 950:ABSOLUTE_MAGNITUDE_THRESHOLD, 1300:ABSOLUTE_MAGNITUDE_THRESHOLD, 1800:ABSOLUTE_MAGNITUDE_THRESHOLD, 2400:ABSOLUTE_MAGNITUDE_THRESHOLD, 3100:ABSOLUTE_MAGNITUDE_THRESHOLD, 3800:ABSOLUTE_MAGNITUDE_THRESHOLD, 4700:25000}
+MAGNITUDE_THRESHOLDS = {freq: ABSOLUTE_MAGNITUDE_THRESHOLD if freq != 4700 else 25000 for freq in FREQUENCIES}
+
 
 def get_frequency_magnitude(chunk, target_freq, sample_rate, bandwidth=50):
     if len(chunk) == 0:
@@ -53,7 +54,7 @@ def detect_bit(chunk, previous_chunk, freq, threshold, sample_rate):
           current_magnitude * RELATIVE_MAGNITUDE_THRESHOLD < previous_magnitude):
         return 0
     else:
-        return detect_bit(previous_chunk, np.zeros_like(previous_chunk), freq, threshold)
+        return detect_bit(previous_chunk, np.zeros_like(previous_chunk), freq, threshold, sample_rate)
 
 
 def decode_fsk_signal(filename):
@@ -64,7 +65,7 @@ def decode_fsk_signal(filename):
     if len(audio_data.shape) == 2:
         audio_data = np.mean(audio_data, axis=1).astype(audio_data.dtype)
  
-    start_pos = int(get_pilot_start(audio_data, pilot_chunk_size, sample_rate) + pilot_chunk_size)
+    start_pos = get_pilot_start(audio_data, pilot_chunk_size, sample_rate) + pilot_chunk_size
    
     if start_pos is None:
         print("Pilot signal not found")
@@ -73,15 +74,15 @@ def decode_fsk_signal(filename):
     
     end_pos = start_pos + 10 * sample_rate # Signal is 10 seconds
  
-    binary_data = []
+    bits = []
    
     previous_chunk = audio_data[start_pos - chunk_size: start_pos]
     for i in range(start_pos, end_pos, chunk_size):
         chunk = audio_data[i:i + chunk_size]
         for freq in FREQUENCIES:
             detected = detect_bit(chunk, previous_chunk, freq, MAGNITUDE_THRESHOLDS[freq], sample_rate)
-            binary_data.append(detected)
+            bits.append(detected)
             previous_chunk = chunk
    
-    return binary_data, audio_data, sample_rate
+    return bits, audio_data, sample_rate
 
